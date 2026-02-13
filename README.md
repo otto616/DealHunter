@@ -1,3 +1,3 @@
 # DealHunter
-![Logo](logos/DealHunter.jpg)
+![Logo](Logos/DealHunter.jpg)
 Video game price tracker with Django and CheapShark API. Find the best deals and manage your wishlist.
