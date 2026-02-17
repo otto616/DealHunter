@@ -3,8 +3,8 @@ from .models import Game
 
 # Create your views here.
 
-def index(request):
+def home(request):
 
     games = Game.objects.all()
 
-    return render(request, 'games/index.html', {'games': games})
+    return render(request, 'games/home.html', {'games': games})
