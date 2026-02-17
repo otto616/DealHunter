@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <h1>
+        Game catalogue
+    </h1>
+    <div class="grid"> {% for game in games %}
+            <div class="card"> <img src ="{{ game.cover_url }}">
+                <h3>
+                    {{ game.title }}
+                </h3>
+            </div>
+        {% endfor %}
+    </div>
+
+</body>
+
+</html>
