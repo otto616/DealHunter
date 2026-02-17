@@ -13,7 +13,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("Initializing data load from CheapSharkAPI..."))
 
         # Load shops
-        shops_url = 'https:// www.cheapshark.com/api/1.0/stores'
+        shops_url = 'https://www.cheapshark.com/api/1.0/stores'
         shop_json = requests.get(shops_url).json()
 
         for shop in shop_json:  # StoreID, storeName, isActive... Are the params as the API serves them
@@ -21,18 +21,20 @@ class Command(BaseCommand):
             Shop.objects.update_or_create(api_ID=shop['storeID'], defaults={'name': shop['storeName'], 'service_state': shop['isActive'], 'logo_url': logo})
 
         # Load offers (Game + Availability)
-        offers_url = 'https:// www.cheapshark.com/api/1.0/deals'
+        offers_url = 'https://www.cheapshark.com/api/1.0/deals'
         offers_json = requests.get(offers_url).json()
 
         for offer in offers_json:
-            correct_date = datetime.fromtimestamp(offer['releaseDate'])
-
-            # if offer['releaseDate'] == 0: Falta chequeig dates 0 i puntuacions 0
-
-            if offer['metacriticScore'] is None:
-                game_obj, _ = Game.objects.update_or_create(api_ID=offer['gameID'], defaults={'title': offer['title'], 'score': 0.0, 'launch_date': correct_date, 'cover_url': offer['thumb']})
+            if offer['releaseDate'] > 0:
+                correct_date = datetime.fromtimestamp(offer['releaseDate'])
             else:
-                game_obj, _ = Game.objects.update_or_create(api_ID=offer['gameID'], defaults={'title': offer['title'], 'score': offer['metacriticScore'], 'launch_date': correct_date, 'cover_url': offer['thumb']})
+                correct_date = datetime(2000,1,1) # If the game doesn't have a specified date
+
+            score_val = offer.get('metacriticScore', 0)
+            if score_val is None or score_val == "0":
+                score_val = 0   # Default value for non-existent scores
+
+            game_obj, _ = Game.objects.update_or_create(api_ID=offer['gameID'], defaults={'title': offer['title'], 'score': float(score_val), 'launch_date': correct_date, 'cover_url': offer['thumb']})
 
             try:
                 shop_obj = Shop.objects.get(api_ID=offer['storeID'])
